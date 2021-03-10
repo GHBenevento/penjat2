@@ -109,4 +109,32 @@ public class Puntuacio {
     public String[] getParaules3() {
         return paraules3;
     }
+
+    public int getDificultat() {
+        return dificultat;
+    }
+
+    public void setDificultat(int dificultat) {
+        this.dificultat = dificultat;
+    }
+
+    public void setIntents(int intents) {
+        this.intents = intents;
+    }
+
+    public long getInici() {
+        return inici;
+    }
+
+    public void setInici(long inici) {
+        this.inici = inici;
+    }
+
+    public void setTemps(float temps) {
+        this.temps = temps;
+    }
+
+    public String[] getLetresBonus() {
+        return letresBonus;
+    }
 }
