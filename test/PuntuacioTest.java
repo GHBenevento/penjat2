@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -97,12 +99,22 @@ public class PuntuacioTest {
         assertEquals(tries, puntuacio.getIntents(), "Wrong");
     }
 
-
     @Test
     void calculatePointsLevel1() {
+        String[] guessedWord = {"p", "o", "r", "c"};
+        puntuacio.getParaulaSecretaDificultat(1);
+        puntuacio.setParaula("porc");
+        float points = 200f;
+        assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
+    }
+
+
+    @Test
+    void calculatePointsLevel1Extra() {
         String[] guessedWord = {"a", "r", "a", "n", "y", "a"};
         puntuacio.getParaulaSecretaDificultat(1);
-        float points = 60f;
+        puntuacio.setParaula("aranya");
+        float points = 210f;
         assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
     }
 
@@ -110,15 +122,26 @@ public class PuntuacioTest {
     void calculatePointsLevel1Wrong() {
         String[] guessedWord = {"p", null, "r", "c"};
         puntuacio.getParaulaSecretaDificultat(1);
+        puntuacio.setParaula("porc");
         float points = 30f;
         assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
     }
 
     @Test
     void calculatePointsLevel2() {
+        String[] guessedWord = {"n", "e", "c", "t", "a", "r", "i", "n", "a"};
+        puntuacio.getParaulaSecretaDificultat(2);
+        puntuacio.setParaula("nectarina");
+        float points = 400f;
+        assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
+    }
+
+    @Test
+    void calculatePointsLevel2Extra() {
         String[] guessedWord = {"x", "i", "n", "x", "i", "l", "l", "a"};
         puntuacio.getParaulaSecretaDificultat(2);
-        float points = 160f;
+        puntuacio.setParaula("xinxilla");
+        float points = 410f;
         assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
     }
 
@@ -126,15 +149,26 @@ public class PuntuacioTest {
     void calculatePointsLevel2Wrong() {
         String[] guessedWord = {"n", null, "c", null, "a", null, "i", "n", "a"};
         puntuacio.getParaulaSecretaDificultat(2);
+        puntuacio.setParaula("nectarina");
         float points = 120f;
         assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
     }
 
     @Test
     void calculatePointsLevel3() {
+        String[] guessedWord = {"e", "s", "c", "o", "m", "b", "r", "a", "r", "i", "e", "s"};
+        puntuacio.getParaulaSecretaDificultat(3);
+        puntuacio.setParaula("escombraries");
+        float points = 600f;
+        assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
+    }
+
+    @Test
+    void calculatePointsLevel3Extra() {
         String[] guessedWord = {"e", "s", "c", "o", "p", "i", "n", "y", "e", "s"};
         puntuacio.getParaulaSecretaDificultat(3);
-        float points = 300f;
+        puntuacio.setParaula("escopinyes");
+        float points = 610f;
         assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
     }
 
@@ -142,6 +176,7 @@ public class PuntuacioTest {
     void calculatePointsLevel3Wrong() {
         String[] guessedWord = {null, null, "c", "o", "m", "b", null, "a", null, "i", null, null};
         puntuacio.getParaulaSecretaDificultat(3);
+        puntuacio.setParaula("escombraries");
         float points = 180f;
         assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
     }
@@ -151,9 +186,74 @@ public class PuntuacioTest {
     void calculatePointsEmpty(int dif) {
         String[] guessedWord = {null, null, null, null};
         puntuacio.getParaulaSecretaDificultat(dif);
+        puntuacio.setParaula("porc");
         float points = 0f;
         assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3})
+    void calculatePointsNormal(int dif) {
+        String[] guessedWord = {"p", "o", "r", "c"};
+        puntuacio.getParaulaSecretaDificultat(dif);
+        puntuacio.setParaula("porc");
+        float points = switch (dif) {
+            case 1 -> 200f;
+            case 2 -> 400f;
+            case 3 -> 600f;
+            default -> 0f;
+        };
+        assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3})
+    void calculatePointsExtra(int dif) {
+        String[] guessedWord = {"a", "r", "a", "n", "y", "a"};
+        puntuacio.getParaulaSecretaDificultat(dif);
+        puntuacio.setParaula("aranya");
+        float points = switch (dif) {
+            case 1 -> 210f;
+            case 2 -> 410f;
+            case 3 -> 610f;
+            default -> 0f;
+        };
+        assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3})
+    void calculatePointsWrong(int dif) {
+        String[] guessedWord = {"a", "r", "a", "n", null, "a"};
+        puntuacio.getParaulaSecretaDificultat(dif);
+        puntuacio.setParaula("aranya");
+        float points = switch (dif) {
+            case 1 -> 50f;
+            case 2 -> 100f;
+            case 3 -> 150f;
+            default -> 0f;
+        };
+        assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3})
+    void calculatePointsTime(int dif) {
+        String[] guessedWord = {"p", "o", "r", "c"};
+        puntuacio.getParaulaSecretaDificultat(dif);
+        puntuacio.setParaula("porc");
+        float points = switch (dif) {
+            case 1 -> 193;
+            case 2 -> 393;
+            case 3 -> 593;
+            default -> 0f;
+        };
+        try {
+            TimeUnit.SECONDS.sleep(7);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertEquals(puntuacio.calcularPuntuacio(guessedWord, 1), points, "Nope");
+    }
 }
 
